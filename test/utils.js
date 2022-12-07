@@ -1,3 +1,8 @@
+/*
+ * @Author: razer.hua
+ * @Date: 2022-12-02 17:29:23
+ * @Description: 
+ */
 /**
  * @file utils
  * @author panyuqi (pyqiverson@gmail.com)
@@ -13,7 +18,7 @@ const webpackMajorVersion = require('webpack/package.json').version.split('.')[0
 const outputFileSystem = new MFS();
 
 exports.runWebpackCompilerMemoryFs = function runWebpackCompiler(config) {
-    if (webpackMajorVersion === '4') {
+    if (webpackMajorVersion === '4' || webpackMajorVersion === '5') {
         config.mode = 'production';
     }
 

@@ -1,3 +1,8 @@
+/*
+ * @Author: razer.hua
+ * @Date: 2022-12-02 17:29:23
+ * @Description: 
+ */
 /**
  * @file skeleton conf
  * @author panyuqi (pyqiverson@gmail.com)
@@ -13,7 +18,7 @@ const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const {VueLoaderPlugin} = require('vue-loader');
 
 const SkeletonWebpackPlugin = require('../../lib');
 
