@@ -27,7 +27,7 @@ function resolve(dir) {
 }
 
 let webpackConfig = merge(baseWebpackConfig, {
-  mode: 'production',
+  mode: 'development',
   module: {
     rules: utils.styleLoaders({
       sourceMap: false,

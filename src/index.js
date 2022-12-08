@@ -96,19 +96,17 @@ class SkeletonPlugin {
    * @param {Object} skeletons skeletons
    * @param {Object} target skeleton
    */
-  findSkeleton(skeletons = {}, chunks) {
+  findSkeleton(htmlPluginData, skeletons = {}, chunks) {
+    const usedChunks = htmlPluginData.plugin.userOptions.chunks || chunks;
 
-    // const usedChunks = Object.keys(chunks);
     let entryKey;
-
     // find current processing entry
-    if (Array.isArray(chunks)) {
-      entryKey = Object.keys(skeletons).find(v => chunks.indexOf(v) > -1);
+    if (Array.isArray(usedChunks)) {
+      entryKey = Object.keys(skeletons).find(v => usedChunks.indexOf(v) > -1);
     }
     else {
       entryKey = DEFAULT_ENTRY_NAME;
     }
-
     return {
       name: entryKey,
       skeleton: skeletons[entryKey]
@@ -123,7 +121,7 @@ class SkeletonPlugin {
    */
   injectToHtml(htmlPluginData, skeletons = {}, chunks) {
     let { insertAfter } = this.options;
-    const { name, skeleton } = this.findSkeleton(skeletons, chunks);
+    const { name, skeleton } = this.findSkeleton(htmlPluginData, skeletons, chunks);
     if (!skeleton) {
       console.log('Empty entry for skeleton, please check your webpack.config.');
       return;

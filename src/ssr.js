@@ -78,9 +78,7 @@ module.exports = function renderSkeleton(serverWebpackConfig, { quiet = false, c
         if (childCompilation.assets[outputCssBasename]) {
           skeletonCSS = childCompilation.assets[outputCssBasename].source();
         }
-
-        console.log('compilation.assets', compilation.assets);
-
+        
         // delete JS & CSS files
         delete compilation.assets[outputJSPath];
         delete compilation.assets[outputCssBasename];
