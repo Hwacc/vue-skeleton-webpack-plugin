@@ -37,20 +37,18 @@ class SkeletonPlugin {
           .catch(e => console.log(e));
 
         const chunks = []
-        
+
         HtmlWebpackPlugin
-        .getHooks(compilation)
-        .beforeAssetTagGeneration
-        .tapAsync(PLUGIN_NAME, (data, callback) => {
-          const { publicPath } = data.assets;
-          data.assets.chunks = {};
-          for (const entryPoint of compilation.entrypoints.values()) {
-            for (const chunk of entryPoint.chunks) {
-              chunks.push(chunk.name)
+          .getHooks(compilation)
+          .beforeAssetTagGeneration
+          .tapAsync(PLUGIN_NAME, (data, callback) => {
+            for (const entryPoint of compilation.entrypoints.values()) {
+              for (const chunk of entryPoint.chunks) {
+                chunks.push(chunk.name)
+              }
             }
-          }
-          callback(null, data);
-        })
+            callback(null, data);
+          })
 
         HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
           this.injectToHtml(htmlPluginData, skeletons, chunks);
