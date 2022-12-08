@@ -46,7 +46,6 @@ class SkeletonPlugin {
           data.assets.chunks = {};
           for (const entryPoint of compilation.entrypoints.values()) {
             for (const chunk of entryPoint.chunks) {
-              console.log('chunk', chunk.name);
               chunks.push(chunk.name)
             }
           }
@@ -54,7 +53,6 @@ class SkeletonPlugin {
         })
 
         HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
-          console.log('chunks', chunks);
           this.injectToHtml(htmlPluginData, skeletons, chunks);
           callback(null, htmlPluginData);
         })
