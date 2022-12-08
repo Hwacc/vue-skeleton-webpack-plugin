@@ -7,21 +7,22 @@
     "lib"
   ],
   "scripts": {
-    "build": "buble src -o lib",
+    "build": "buble src --no forOf -o lib ",
     "lint": "fecs ./ --rule --type 'vue,js,css'",
     "prepublish": "npm run build",
     "test": "npm run build && nyc ava",
-    "test:5": "ava ./test/webpack5.test.js"
+    "test:5": "ava ./test/webpack5.test.js",
+    "wb": "webpack build --config ./examples/webpack5/webpack.config.js"
   },
   "dependencies": {
     "loader-utils": "^1.1.0",
     "path-to-regexp": "^2.1.0",
     "uglify-es": "^3.3.4",
-    "vue-server-renderer": "^2.3.4",
+    "vue-server-renderer": "^2.7.14",
     "webpack-node-externals": "^1.6.0"
   },
   "devDependencies": {
-    "@vue/cli-service": "^3.0.1",
+    "@vue/cli-service": "~5.0.8",
     "autoprefixer": "^8.2.0",
     "ava": "^0.18.2",
     "babel-cli": "^6.24.0",
@@ -37,22 +38,26 @@
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^5.5.0",
     "memory-fs": "^0.4.1",
-    "mini-css-extract-plugin": "^0.4.0",
+    "mini-css-extract-plugin": "^2.7.2",
     "multipage-webpack-plugin": "^0.4.0",
     "nyc": "^10.3.2",
     "postcss-loader": "^2.1.5",
     "rimraf": "^2.6.0",
     "url-loader": "^1.0.1",
-    "vue": "^2.3.3",
-    "vue-loader": "^14.0.0",
+    "vue": "^2.7.14",
+    "vue-loader": "^15.10.0",
     "vue-router": "^2.7.0",
-    "vue-style-loader": "^3.0.1",
+    "vue-style-loader": "^4.1.3",
     "vue-template-compiler": "^2.3.4",
     "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.1",
     "webpack-merge": "^4.1.0"
   },
   "peerDependencies": {
-    "webpack": "^5.0.0"
+    "webpack": "^5.0.0",
+    "vue": "^2.7.x",
+    "vue-server-renderer": "^2.7.x",
+    "mini-css-extract-plugin": "^2.0.0"
   },
   "engines": {
     "node": ">=6.9"

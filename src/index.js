@@ -27,14 +27,8 @@ class SkeletonPlugin {
 
   apply(compiler) {
     let skeletons;
-    // compatible with webpack 4.x
     if (compiler.hooks) {
       compiler.hooks.make.tapAsync(PLUGIN_NAME, (compilation, cb) => {
-        if (!compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing) {
-          console.error('VueSkeletonWebpackPlugin must be placed after HtmlWebpackPlugin in `plugins`.');
-          return;
-        }
-
         this.generateSkeletonForEntries(this.extractEntries(compiler.options.entry), compiler, compilation)
           .then(skeletonResults => {
             skeletons = skeletonResults.reduce((cur, prev) => Object.assign(prev, cur), {});
@@ -42,32 +36,29 @@ class SkeletonPlugin {
           })
           .catch(e => console.log(e));
 
-        if (compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing) {
-          compilation.hooks.htmlWebpackPluginBeforeHtmlProcessing.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
-            this.injectToHtml(htmlPluginData, skeletons);
-            callback(null, htmlPluginData);
-          });
-        } else {
-          HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
-            this.injectToHtml(htmlPluginData, skeletons);
-            callback(null, htmlPluginData);
-          })
-        }
-      });
-    }
-    else {
-      compiler.plugin('make', (compilation, cb) => {
-        this.generateSkeletonForEntries(this.extractEntries(compiler.options.entry), compiler, compilation)
-          .then(skeletonResults => {
-            skeletons = skeletonResults.reduce((cur, prev) => Object.assign(prev, cur), {});
-            cb();
-          })
-          .catch(e => console.log(e));
+        const chunks = []
+        
+        HtmlWebpackPlugin
+        .getHooks(compilation)
+        .beforeAssetTagGeneration
+        .tapAsync(PLUGIN_NAME, (data, callback) => {
+          const { publicPath } = data.assets;
+          data.assets.chunks = {};
+          for (const entryPoint of compilation.entrypoints.values()) {
+            for (const chunk of entryPoint.chunks) {
+              console.log('chunk', chunk.name);
+              chunks.push(chunk.name)
+            }
+          }
+          callback(null, data);
+        })
 
-        compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback) => {
-          this.injectToHtml(htmlPluginData, skeletons);
+        HtmlWebpackPlugin.getHooks(compilation).beforeEmit.tapAsync(PLUGIN_NAME, (htmlPluginData, callback) => {
+          console.log('chunks', chunks);
+          this.injectToHtml(htmlPluginData, skeletons, chunks);
           callback(null, htmlPluginData);
-        });
+        })
+
       });
     }
   }
@@ -102,17 +93,17 @@ class SkeletonPlugin {
   /**
    * find skeleton for current html-plugin in all skeletons
    * 
-   * @param {Object} htmlPluginData data for html-plugin
    * @param {Object} skeletons skeletons
    * @param {Object} target skeleton
    */
-  findSkeleton(htmlPluginData, skeletons = {}) {
-    const usedChunks = Object.keys(htmlPluginData.assets.chunks);
+  findSkeleton(skeletons = {}, chunks) {
+
+    // const usedChunks = Object.keys(chunks);
     let entryKey;
 
     // find current processing entry
-    if (Array.isArray(usedChunks)) {
-      entryKey = Object.keys(skeletons).find(v => usedChunks.indexOf(v) > -1);
+    if (Array.isArray(chunks)) {
+      entryKey = Object.keys(skeletons).find(v => chunks.indexOf(v) > -1);
     }
     else {
       entryKey = DEFAULT_ENTRY_NAME;
@@ -130,9 +121,9 @@ class SkeletonPlugin {
    * @param {Object} htmlPluginData data for html-plugin
    * @param {Object} skeletons skeletons
    */
-  injectToHtml(htmlPluginData, skeletons = {}) {
+  injectToHtml(htmlPluginData, skeletons = {}, chunks) {
     let { insertAfter } = this.options;
-    const { name, skeleton } = this.findSkeleton(htmlPluginData, skeletons);
+    const { name, skeleton } = this.findSkeleton(skeletons, chunks);
     if (!skeleton) {
       console.log('Empty entry for skeleton, please check your webpack.config.');
       return;

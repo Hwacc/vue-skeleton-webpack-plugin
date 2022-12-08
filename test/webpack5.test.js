@@ -22,7 +22,7 @@ import {
 
 const fs = testFs;
 
-const simpleExamplePath = path.resolve(__dirname, '../examples/webpack4');
+const simpleExamplePath = path.resolve(__dirname, '../examples/webpack5');
 const webpackBuildPath = path.resolve(simpleExamplePath, './dist');
 
 const readFile = Promise.promisify(fs.readFile, {context: fs});
@@ -30,7 +30,7 @@ const readFile = Promise.promisify(fs.readFile, {context: fs});
 let webpackBuildStats = null;
 
 if (webpackMajorVersion  === '5') {
-    let simpleConfig = require('../examples/webpack4/webpack.config.js');
+    let simpleConfig = require('../examples/webpack5/webpack.config.js');
 
     test.before('run webpack build first', async t => {
         webpackBuildStats = await runWebpackCompilerMemoryFs(simpleConfig);
@@ -46,7 +46,7 @@ if (webpackMajorVersion  === '5') {
 
         htmlContent = htmlContent.toString();
         // ssr dom has been injected into mounted point
-        t.true(htmlContent.includes('<div data-server-rendered=true class=skeleton-wrapper'));
+        t.true(htmlContent.includes('<div data-server-rendered=\"true\" class=\"skeleton-wrapper\"'));
 
         // inlined css
         t.true(htmlContent.includes('<style>.skeleton-header'));
